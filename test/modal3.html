@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>Modal Example</title>
+<style>
+.modalMask{
+top:0;
+left:0;
+position:fixed;
+background-color:gray;
+width:100%;
+height:100%;
+border:1px solid black;
+opacity:70%;
+}
+.modal{
+top:0;
+right:0;
+bottom:0;
+left:0;
+margin:auto;
+position:fixed;
+background-color:white;
+border:3px solid black;
+width:400px;
+min-width:400px;
+height:300px;
+min-height:300px;
+overflow:auto;
+}
+.closeModal{
+float:right;
+font-size:20pt;
+margin:5px 10px;
+cursor:pointer;
+}
+</style>
+<script>
+var $$$={
+"modals" : function(contentId){
+for(var i=0;i<ds.modals.length;i++)
+{
+if(ds.modals[i].contentReference.id==contentId) return ds.modals[i];
+}
+}
+};
+var ds={
+"modals" : []
+};
+function Modal(contentReference)
+{
+this.contentReference=contentReference;
+this.onOpen=null;
+this.onClose=null;
+var objectReference=this;
+contentReference.remove();
+var modalMask=document.createElement("div");
+modalMask.classList.add('modalMask');
+var modal=document.createElement("div");
+modal.classList.add('modal');
+var closeModal=document.createElement("span");
+closeModal.classList.add('closeModal');
+var closeModalMarker=document.createTextNode("x");
+closeModal.appendChild(closeModalMarker);
+modal.appendChild(closeModal);
+modal.appendChild(this.contentReference);
+modalMask.appendChild(modal);
+if(this.contentReference.hasAttribute('maskColor'))
+{
+modalMask.style.background=this.contentReference.getAttribute('maskColor');
+}
+if(this.contentReference.hasAttribute('modalColor'))
+{
+modal.style.background=this.contentReference.getAttribute('modalColor');
+}
+if(this.contentReference.hasAttribute('size'))
+{
+var size=this.contentReference.getAttribute('size');
+var i;
+var width=0;
+var height=0;
+for(i=0;i<size.length && size[i]!='x';i++)
+{
+eval(width=width+size[i]);
+}
+i++;
+for(;i<size.length;i++)
+{
+eval(height=height+size[i]);
+}
+width=width+'px';
+height=height+'px';
+//some problem
+modal.style.width=width;
+modal.style.height=height;
+}
+if(this.contentReference.hasAttribute('closeButton'))
+{
+if(this.contentReference.getAttribute('closeButton').toUpperCase()=='FALSE') closeModalMarker.remove();
+}
+this.show=function(){
+document.body.appendChild(modalMask);
+document.body.appendChild(modal);
+if(this.contentReference.hasAttribute('onOpen')) eval(this.contentReference.getAttribute('onOpen'));
+}
+closeModal.onclick=function(){
+modalMask.remove();
+modal.remove();
+if(objectReference.contentReference.hasAttribute('onClose')) eval(objectReference.contentReference.getAttribute('onClose'));
+}
+}
+function loader()
+{
+var docs=document.getElementsByTagName('*');
+var i;
+var modal=null;
+for(i=0;i<docs.length;i++)
+{
+if(docs[i].hasAttribute('modal') && docs[i].getAttribute('modal')=='true')
+{
+modal=new Modal(docs[i]);
+ds.modals[ds.modals.length]=modal;
+i--;
+}
+}
+}
+window.addEventListener("load",function(){
+loader();
+});
+function onOpened()
+{
+alert('Modal Opened');
+}
+function onClosed()
+{
+alert('Modal Closed');
+}
+function forModal(contentId)
+{
+$$$.modals(contentId).show();
+}
+</script>
+</head>
+<body>
+<button type='button' onclick="forModal('ABC')">modal1</button>
+<button type='button' onclick="forModal('PQR')">modal2</button>
+<button type='button' onclick="forModal('JKL')">modal3</button>
+<div id='ABC' modal='true' maskColor='red' modalColor='green' size='150x100' closeButton='false' onOpen='onOpened()' onClose='onClosed()'>
+AAMIR AHMAD NAGORI 1 <br>
+AAMIR AHMAD NAGORI 1 <br>
+AAMIR AHMAD NAGORI 1 <br>
+AAMIR AHMAD NAGORI 1 <br>
+AAMIR AHMAD NAGORI 1 <br>
+AAMIR AHMAD NAGORI 1 <br>
+</div>
+<div id='PQR' modal='true'>
+<h1>AAMIR AHMAD</h1>
+<h2>NAGORI</h2>
+</div>
+<div id='JKL' modal='true'>
+<table border='1' cellspacing='5px'>
+<tr>
+<td>1.</td>
+<td>Aameen Patel</td>
+<td>0704CS181002</td>
+</tr>
+<tr>
+<td>2.</td>
+<td>Aamir Ahmad</td>
+<td>0704CS181003</td>
+</tr>
+<tr>
+<td>3.</td>
+<td>Abhishek Patidar</td>
+<td>0704CS181010</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

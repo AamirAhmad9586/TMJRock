@@ -1,0 +1,91 @@
+<!--                          Accordian Pane       -->
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>JROCKLIBRARY</title>
+<script>
+var panels=[];
+var extendedPanel=-1;
+function accordianHeadingClicked(i)
+{
+if(extendedPanel!=-1) panels[extendedPanel].style.display='none';
+panels[i+1].style.display=panels[i+1].oldDisplay;
+extendedPanel=i+1;
+}
+function start()
+{
+var accordian=document.getElementById('accordian');
+var children=accordian.childNodes;
+var i;
+for(i=0;i<children.length;i++)
+{
+if(children[i].nodeName=='H1') panels[panels.length]=children[i];
+if(children[i].nodeName=='DIV') panels[panels.length]=children[i];
+}
+if(panels.length%2!=0) throw "Oh! Some Problem related to (length%2!=0)";
+for(i=0;i<panels.length;i+=2)
+{
+if(panels[i].nodeName!='H1') throw "H1 and DIV malformed in call to start";
+if(panels[i+1].nodeName!='DIV') throw "H1 and DIV malformed in call to start";
+}
+function createClickHandler(i)
+{
+return function(){
+accordianHeadingClicked(i);
+};
+}
+for(i=0;i<panels.length;i+=2)
+{
+panels[i].onclick=createClickHandler(i);
+panels[i+1].oldDisplay=panels[i+1].style.display;
+panels[i+1].style.display='none';
+}
+}
+window.addEventListener("load",start);
+</script>
+</head>
+<body>
+<div id='accordian'>
+<h1>Click Me Heading 1</h1>
+<div>
+AAMIR AHMAD NAGORI 1
+AAMIR AHMAD NAGORI 1
+AAMIR AHMAD NAGORI 1
+AAMIR AHMAD NAGORI 1
+AAMIR AHMAD NAGORI 1
+AAMIR AHMAD NAGORI 1
+AAMIR AHMAD NAGORI 1
+AAMIR AHMAD NAGORI 1
+AAMIR AHMAD NAGORI 1
+AAMIR AHMAD NAGORI 1
+</div>
+<h1>Click Me Heading 2</h1>
+<div>
+AAMIR AHMAD NAGORI 2
+AAMIR AHMAD NAGORI 2
+AAMIR AHMAD NAGORI 2
+AAMIR AHMAD NAGORI 2
+AAMIR AHMAD NAGORI 2
+AAMIR AHMAD NAGORI 2
+AAMIR AHMAD NAGORI 2
+AAMIR AHMAD NAGORI 2
+AAMIR AHMAD NAGORI 2
+AAMIR AHMAD NAGORI 2
+</div>
+<h1>Click Me Heading 3</h1>
+<div>
+AAMIR AHMAD NAGORI 3
+AAMIR AHMAD NAGORI 3
+AAMIR AHMAD NAGORI 3
+AAMIR AHMAD NAGORI 3
+AAMIR AHMAD NAGORI 3
+AAMIR AHMAD NAGORI 3
+AAMIR AHMAD NAGORI 3
+AAMIR AHMAD NAGORI 3
+AAMIR AHMAD NAGORI 3
+AAMIR AHMAD NAGORI 3
+</div>
+</div>
+</body>
+</html>

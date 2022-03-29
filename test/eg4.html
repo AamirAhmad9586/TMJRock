@@ -1,0 +1,163 @@
+<!--                     Send JSON for POST type Request and make url String-->
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJROCKLIBRARY</title>
+<script>
+//TMJROCKLIBRARY part starts
+function $$$(componentId)
+{
+var element=document.getElementById(componentId);
+if(!element) throw "Invalid Component ID : \""+componentId+"\"";
+return new TMJROCKElement(element);
+}
+function TMJROCKElement(element)
+{
+this.element=element;
+this.value=function(content){
+if((typeof this.element.value)=='string')
+{
+if((typeof content)=='string')
+{
+this.element.value=content;
+}
+return this.element.value;
+}
+else
+{
+return null;
+}
+}
+this.html=function(content){
+if((typeof this.element.innerHTML)=='string')
+{
+if((typeof content)=='string')
+{
+this.element.innerHTML=content;
+}
+return this.element.innerHTML;
+}
+else
+{
+return null;
+}
+}
+}
+$$$.ajax=function(jsonObj){
+if(!jsonObj["url"]) throw "URL property missing in call to ajax";
+let url=jsonObj["url"];
+if((typeof url)!='string') throw "URL property should be of type string in call to ajax";
+let methodType="GET";
+if(jsonObj["methodType"])
+{
+methodType=jsonObj["methodType"];
+if((typeof methodType)!='string') throw "Method Type should be of type string in call to ajax";
+methodType=methodType.toUpperCase();
+if(['GET','POST'].includes(methodType)==false) throw "Method Type should be GET/POST in call to ajax";
+}
+let success=null;
+if(jsonObj["success"])
+{
+success=jsonObj["success"];
+if((typeof success)!='function') throw "Success Property should be of function type in call to ajax";
+}
+let failure=null;
+if(jsonObj["failure"])
+{
+failure=jsonObj["failure"];
+if((typeof failure)!='function') throw "Failure Property should be of function type in call to ajax";
+}
+let isJson=false;
+if(jsonObj["isJson"])
+{
+isJson=jsonObj["isJson"];
+if((typeof isJson)!='boolean') throw "isJson should be type of \"boolean\" in call to ajax";
+}
+if(methodType=="GET")
+{
+}
+if(methodType=="POST")
+{
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+if(success) success(this.responseText);
+}
+else
+{
+if(failure) failure();
+}
+}
+};
+let data=null;
+let queryString="";
+if(jsonObj["data"])
+{
+data=jsonObj["data"];
+var x=0;
+var propertyName;
+var propertyValue;
+for(k in data)
+{
+if(x==0) x=1;
+else queryString+="&";
+propertyName=encodeURI(k);
+propertyValue=encodeURI(data[k]);
+queryString=queryString+propertyName+"="+propertyValue;
+}
+}
+xmlHttpRequest.open(methodType,url,true);
+if(isJson==true)
+{
+xmlHttpRequest.setRequestHeader("Content-Type","application/json");
+xmlHttpRequest.send(JSON.stringify(data));
+}
+else
+{
+xmlHttpRequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+xmlHttpRequest.send(queryString);
+}
+}
+}
+//TMJROCKLIBRARY part ends
+function register()
+{
+var firstName=$$$('firstName').value();
+var lastName=$$$('lastName').value();
+var age=$$$('age').value();
+$$$.ajax({
+"url" : "servletSix",
+"methodType" : "POST",
+"isJson" : true,
+"data" : {
+"firstName" : firstName,
+"lastName" : lastName,
+"age" : age
+},
+"success" : function(responseData){
+responseData=JSON.parse(responseData);
+var info=$$$('info');
+info.html(responseData.firstName+","+responseData.lastName+","+responseData.age);
+},
+"failure" : function(){
+alert("Some Problem");
+}
+});
+}
+</script>
+</head>
+<body>
+Enter First Name : 
+<input type='text' id='firstName' name='firstName'><br><br>
+Enter Last Name : 
+<input type='text' id='lastName' name='lastName'><br><br>
+Enter Age : 
+<input type='text' id='age' name='age'><br><br>
+<button type='button' onclick='register()'>Register</button>
+<span id='info'></span>
+</body>
+</html>

@@ -1,0 +1,140 @@
+ <!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>ASDF</title>
+<style>
+.modalMask{
+top:0;
+left:0;
+position:fixed;
+width:100%;
+height:100%;
+background-color:gray;
+opacity:70%;
+border:3px solid black;
+opacity:70%;
+}
+.modal{
+top:0;
+left:0;
+bottom:0;
+right:0;
+margin:auto;
+position:fixed;
+width:400px;
+min-width:400px;
+height:300px;
+min-height:300px;
+background-color:white;
+border:2px solid black;
+overflow:auto;
+overflow:scroll;
+}
+.closeModal{
+float:right;
+font-size:20pt;
+padding: 5px 10px;
+cursor:pointer;
+}
+</style>
+<script>
+function Modal(cid)
+{
+this.onOpen=null;
+this.onClose=null;
+var contentId=cid;
+var contentReference=document.getElementById(contentId);
+var contentParentReference=contentReference.parentElement;
+var contentIndex=0;
+while(contentIndex<contentParentReference.children.length)
+{
+if(contentReference==contentParentReference.children[contentIndex])
+{
+break;
+}
+contentIndex++;
+}
+var objectReference=this;
+var modalMask=document.createElement('div');
+modalMask.classList.add('modalMask');
+var modal=document.createElement('div');
+modal.classList.add('modal');
+var closeModal=document.createElement('span');
+closeModal.classList.add('closeModal');
+var closeModalMarker=document.createTextNode('x');
+closeModal.appendChild(closeModalMarker);
+modal.appendChild(closeModal);
+var contentIndex=0;
+while(contentIndex<contentParentReference.children.length)
+{
+if(contentReference==contentParentReference.children[contentIndex])
+{
+break;
+}
+contentIndex++;
+}
+contentReference.remove();
+modal.appendChild(contentReference);
+this.show=function(){
+document.body.appendChild(modalMask);
+document.body.appendChild(modal);
+if(this.onOpen) this.onOpen();
+}
+closeModal.onclick=function(){
+contentReference.remove();
+modal.remove();
+modalMask.remove();
+if(contentParentReference.children.length==contentIndex)
+{
+contentParentReference.appendChild(contentReference);
+}
+else
+{
+contentParentReference.insertBefore(contentReference,contentParentReference.children[contentIndex]);
+}
+if(objectReference.onClose) objectReference.onClose();
+}
+}
+function forModal1()
+{
+var modal1=new Modal('div1');
+modal1.onOpen=function(){
+alert('modal Opened.');
+}
+modal1.show();
+modal1.onClose=function(){
+alert('modal closed');
+}
+}
+function forModal2()
+{
+var modal2=new Modal('div2');
+modal2.onOpen=function(){
+alert('modal Opened.');
+}
+modal2.show();
+modal2.onClose=function(){
+alert('modal closed');
+}
+}
+</script>
+</head>
+<body>
+<button type='button' onclick='forModal1()'>Modal1</button>
+<button type='button' onclick='forModal2()'>Modal2</button>
+<div id='div1'>
+<br>Aamir Ahmad Nagori
+</div>
+<br>
+<div id='div2'>
+<table border='1' id='tb'>
+<tr>
+<td>1.</td>
+<td>Aamir Ahmad</td>
+<td>0704CS181003</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

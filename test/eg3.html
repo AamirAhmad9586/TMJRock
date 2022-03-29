@@ -1,0 +1,151 @@
+<!--                      Create URL String from Data of Json Object   -->
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>TMJROCK LIBRARY</title>
+<script>
+//TMJROCKLIBRARY part starts
+function $$$(componentId)
+{
+var element=document.getElementById(componentId);
+if(!element) throw "Invalid Component ID : \""+componentId+"\"";
+return new TMJROCKElement(element);
+}
+function TMJROCKElement(element)
+{
+this.element=element;
+this.html=function(content){
+if((typeof this.element.innerHTML)=='string')
+{
+if((typeof content)=='string')
+{
+this.element.innerHTML=content;
+}
+return this.element.innerHTML;
+}
+else
+{
+return null;
+}
+}
+this.value=function(content){
+if((typeof this.element.value)=='string')
+{
+if((typeof content)=='string')
+{
+this.element.value=content;
+}
+return this.element.value;
+}
+else
+{
+return null;
+}
+}
+}
+$$$.ajax=function(jsonObj)
+{
+if(!jsonObj["url"]) throw "URL property missing in call to ajax";
+let url=jsonObj["url"];
+if((typeof url)!='string') throw "URL property should be of type string in call to ajax";
+let methodType="GET";
+if(jsonObj["methodType"])
+{
+methodType=jsonObj["methodType"];
+if((typeof methodType)!='string') throw "Method Type should be of type string in call to ajax";
+methodType=methodType.toUpperCase();
+if(['GET','POST'].includes(methodType)==false) throw "Method type should be of GET/POST in call to ajax";
+}
+let success=null;
+if(jsonObj["success"])
+{
+success=jsonObj["success"];
+if((typeof success)!='function') throw "success property should be of type function in call to ajax";
+}
+let failure=null;
+if(jsonObj["failure"])
+{
+failure=jsonObj["failure"];
+if((typeof failure)!='function') throw "failure property should be of type function in call to ajax";
+}
+if(methodType=="GET")
+{
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function()
+{
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+if(success) success(this.responseText);
+}
+else
+{
+if(failure) failure();
+}
+}
+};
+if(jsonObj["data"])
+{
+let data=jsonObj["data"];
+var x=0;
+var propertyName;
+var propertyValue;
+for(k in data)
+{
+propertyName=encodeURI(k);
+propertyValue=encodeURI(data[k]);
+if(x==0) url=url+"?";
+else url=url+"&";
+url=url+propertyName+"="+propertyValue;
+x++;
+}
+}
+xmlHttpRequest.open(methodType,url,true);
+xmlHttpRequest.send();
+}
+if(methodType=='POST')
+{
+}
+}
+//TMJROCKLIBRARY part ends
+function getDesignation()
+{
+var titleSpan=$$$('titleSpan');
+titleSpan.html("");
+var code=$$$('code');
+code=code.value();
+$$$.ajax({
+"url" : "servletFive",
+"methodType" : "get",
+"data" : {
+"code" : code
+},
+"success" : function(responseData){
+responseData=JSON.parse(responseData);
+if(responseData=='INVALID')
+{
+titleSpan.html('INVALID');
+}
+else
+{
+titleSpan.html(responseData.title);
+}
+},
+"failure" : function(){
+alert("Some Problem");
+}
+});
+}
+</script>
+</head>
+<body>
+<center>
+Enter Designation Code : 
+<input type='text' id='code' name='code'>&nbsp;&nbsp;&nbsp;
+<button type='button' onclick='getDesignation()'>Get Designation</button><br>
+<span id='titleSpan'></span>
+</center>
+</body>
+</html>

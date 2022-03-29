@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>JROCKLIBRARY</title>
+<script>
+//TMJROCK LIBRARY part Starts
+function $$$(componentId)
+{
+var element=document.getElementById(componentId);
+if(!element) throw "Invalid Component ID : \""+componentId+"\"";
+return new TMJROCKElement(element);
+}
+function TMJROCKElement(element)
+{
+this.element=element;
+this.html=function(content){
+if((typeof this.element.innerHTML)=='string')
+{
+if((typeof content)=='string')
+{
+this.element.innerHTML=content;
+}
+return this.element.innerHTML;
+}
+else
+{
+return null;
+}
+}
+this.value=function(content){
+if((typeof this.element.value)=='string')
+{
+if((typeof content)=='string')
+{
+this.element.value=content;
+}
+return this.element.value;
+}
+else
+{
+return null;
+}
+}
+this.getChilds=function(){
+if((typeof this.element.childNodes)=='object')
+{
+return this.element.childNodes;
+}
+else
+{
+return null;
+}
+}
+}
+$$$.model={
+"onStartup" : [],
+"accordians" : []
+};
+$$$.onDocumentLoaded=function(func)
+{
+if((typeof func)!='function') throw "Expected function,Found : \""+typeof func+"\"";
+$$$.model.onStartup[$$$.model.onStartup.length]=func;
+}
+$$$.toAccord=function(accordianComponent)
+{
+let panels=[];
+let expandedIndex=-1;
+function accordianClickedHandler(panelIndex,accordianIndex)
+{
+if($$$.model.accordians[accordianIndex].expandedIndex!=-1) $$$.model.accordians[accordianIndex].panels[$$$.model.accordians[accordianIndex].expandedIndex].style.display='none';
+$$$.model.accordians[accordianIndex].panels[panelIndex+1].style.display=$$$.model.accordians[accordianIndex].panels[panelIndex+1].oldDisplay;
+$$$.model.accordians[accordianIndex].expandedIndex=panelIndex+1;
+}
+let accordian=accordianComponent;
+accordian=accordian.childNodes;
+let i;
+for(i=0;i<accordian.length;i++)
+{
+if(accordian[i].nodeName=='H1') panels[panels.length]=accordian[i];
+if(accordian[i].nodeName=='DIV') panels[panels.length]=accordian[i];
+}
+if(panels.length%2!=0) throw "H1 and DIV malformed in call to toAccord.";
+for(i=0;i<panels.length;i+=2)
+{
+if(panels[i].nodeName!='H1') throw "H1 not found at even number.";
+if(panels[i+1].nodeName!='DIV') throw "DIV not found at odd number.";
+}
+let accordianIndex=$$$.model.accordians.length;
+function createClickHandler(panelIndex,accordianIndex)
+{
+return function(){
+accordianClickedHandler(panelIndex,accordianIndex);
+};
+}
+for(i=0;i<panels.length;i+=2)
+{
+panels[i].onclick=createClickHandler(i,accordianIndex);
+panels[i+1].oldDisplay=panels[i+1].style.display;
+panels[i+1].style.display='none';
+}
+$$$.model.accordians[accordianIndex]={
+"panels" : panels,
+"expandedIndex" : -1
+};
+}
+$$$.initFramework=function()
+{
+let docs=document.getElementsByTagName("*");
+let i;
+for(i=0;i<docs.length;i++)
+{
+if(docs[i].hasAttribute('accordian'))
+{
+if(docs[i].getAttribute('accordian')=='true')
+{
+$$$.toAccord(docs[i]);
+}
+}
+}
+for(i=0;i<$$$.model.onStartup.length;i++)
+{
+$$$.model.onStartup[i]();
+}
+}
+window.addEventListener("load",function(){
+$$$.initFramework();
+});
+//TMJROCK LIBRARY part Ends
+</script>
+</head>
+<body>
+<div accordian='true' >
+<h1>Heading Click For 1</h1>
+<div>
+AAMIR AHMAD NAGORI 1 
+AAMIR AHMAD NAGORI 1 
+AAMIR AHMAD NAGORI 1 
+AAMIR AHMAD NAGORI 1 
+AAMIR AHMAD NAGORI 1 
+AAMIR AHMAD NAGORI 1 
+AAMIR AHMAD NAGORI 1 
+AAMIR AHMAD NAGORI 1 
+AAMIR AHMAD NAGORI 1 
+AAMIR AHMAD NAGORI 1 
+</div>
+<h1>Heading Click For 2</h1>
+<div>
+AAMIR AHMAD NAGORI 2 
+AAMIR AHMAD NAGORI 2 
+AAMIR AHMAD NAGORI 2 
+AAMIR AHMAD NAGORI 2 
+AAMIR AHMAD NAGORI 2 
+AAMIR AHMAD NAGORI 2 
+AAMIR AHMAD NAGORI 2 
+AAMIR AHMAD NAGORI 2 
+AAMIR AHMAD NAGORI 2 
+AAMIR AHMAD NAGORI 2 
+</div>
+<h1>Heading Click For 3</h1>
+<div>
+AAMIR AHMAD NAGORI 3 
+AAMIR AHMAD NAGORI 3 
+AAMIR AHMAD NAGORI 3 
+AAMIR AHMAD NAGORI 3 
+AAMIR AHMAD NAGORI 3 
+AAMIR AHMAD NAGORI 3 
+AAMIR AHMAD NAGORI 3 
+AAMIR AHMAD NAGORI 3 
+AAMIR AHMAD NAGORI 3 
+AAMIR AHMAD NAGORI 3 
+</div>
+</div>
+<div accordian='true'>
+<h1>Heading 1</h1>
+<div>AAMIR AHMAD NAGORI 1</div>
+<h1>Heading 2</h1>
+<div>AAMIR AHMAD NAGORI 2</div>
+<h1>Heading 3</h1>
+<div>AAMIR AHMAD NAGORI 3</div>
+<h1>Heading 4</h1>
+<div>AAMIR AHMAD NAGORI 4</div>
+</div>
+<div accordian='true'>
+<h1>Student 1 Data</h1>
+<div>
+<table border='1'>
+<tr>
+<td>1.</td>
+<td>0704CS181003</td>
+<td>Aamir Ahmad</td>
+</tr>
+</table>
+</div>
+<h1>Student 2 Data</h1>
+<div>
+<table border='1'>
+<tr>
+<td>2.</td>
+<td>0704CS181002</td>
+<td>Aameen Patel</td>
+</tr>
+</table>
+</div>
+<h1>Student 3 Data</h1>
+<div>
+<table border='1'>
+<tr>
+<td>3.</td>
+<td>0704CS181010</td>
+<td>Abhishek Patidar</td>
+</tr>
+</table>
+</div>
+</div>
+</body>
+</html>

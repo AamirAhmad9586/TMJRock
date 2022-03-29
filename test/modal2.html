@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>ASDF</title>
+<style>
+.modalMask{
+top:0;
+left:0;
+position:fixed;
+width:100%;
+height:100%;
+background-color:gray;
+opacity:70%;
+border:3px solid black;
+}
+.modal{
+top:0;
+left:0;
+bottom:0;
+right:0;
+margin:auto;
+position:fixed;
+width:400px;
+min-width:400px;
+height:300px;
+min-height:300px;
+background-color:white;
+border:2px solid black;
+overflow:auto;
+}
+.closeModal{
+float:right;
+font-size:20pt;
+padding: 5px 10px;
+cursor:pointer;
+}
+</style>
+<script>
+var ds={
+"modals" : [],
+};
+function Modal(jsonObj)
+{
+if(!jsonObj["contentId"]) throw "Content ID Required,please specify in json Object";
+this.contentId=jsonObj["contentId"];
+this.onOpen=null;
+this.onClose=null;
+var contentReference=document.getElementById(this.contentId);
+var objectReference=this;
+var modalMask=document.createElement('div');
+modalMask.classList.add('modalMask');
+var modal=document.createElement('div');
+modal.classList.add('modal');
+var closeModal=document.createElement('span');
+closeModal.classList.add('closeModal');
+var closeModalMarker=document.createTextNode('x');
+closeModal.appendChild(closeModalMarker);
+modal.appendChild(closeModal);
+modal.appendChild(contentReference);
+this.show=function(){
+document.body.appendChild(modalMask);
+document.body.appendChild(modal);
+if(this.onOpen) this.onOpen();
+}
+closeModal.onclick=function(){
+modal.remove();
+modalMask.remove();
+if(objectReference.onClose) objectReference.onClose();
+}
+}
+function doSomething()
+{
+var docs=document.getElementsByTagName('*');
+var i;
+var modal=null;
+for(i=0;i<docs.length;i++)
+{
+if(docs[i].hasAttribute('modal'))
+{
+if(docs[i].getAttribute('modal')=='true')
+{
+modal=new Modal({
+"contentId" : docs[i].id,
+});
+ds.modals[ds.modals.length]=modal;
+}
+}
+}
+for(i=0;i<docs.length;i++)
+{
+if(docs[i].hasAttribute('modal') && docs[i].getAttribute('modal')=='true') docs[i].remove();
+}
+}
+function forModal1(contentId)
+{
+var i;
+for(i=0;i<ds.modals.length;i++)
+{
+if(ds.modals[i].contentId==contentId) ds.modals[i].show();
+}
+}
+function forModal2(contentId)
+{
+var i;
+for(i=0;i<ds.modals.length;i++)
+{
+if(ds.modals[i].contentId==contentId) ds.modals[i].show();
+}
+}
+window.addEventListener('load',doSomething);
+</script>
+</head>
+<body>
+<button type='button' onclick='forModal1("div1")'>Modal1</button>
+<button type='button' onclick='forModal2("div2")'>Modal2</button>
+<div id='div1' modal='true'>
+<br>Aamir Ahmad Nagori
+</div>
+<br>
+<div id='div2' modal='true'>
+<table border='1' id='tb'>
+<tr>
+<td>1.</td>
+<td>Aamir Ahmad</td>
+<td>0704CS181003</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!--                        Fill Combo Box from given Data   -->
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>JROCK LIBRARY</title>
+<script>
+//JROCK LIBRARY PART STARTS
+function $$$(componentId)
+{
+var element=document.getElementById(componentId);
+if(!element) throw "Invalid Component ID : \""+componentId+"\"";
+return new TMJROCKElement(element);
+}
+function TMJROCKElement(element)
+{
+this.element=element;
+this.html=function(content){
+if((typeof this.element.innerHTML)=='string')
+{
+if((typeof content)=='string')
+{
+this.element.innerHTML=content;
+}
+return this.element.innerHTML;
+}
+else
+{
+return null;
+}
+}
+this.value=function(content){
+if((typeof this.element.value)=='string')
+{
+if((typeof content)=='string')
+{
+this.element.value=content;
+}
+return this.element.value;
+}
+else
+{
+return null;
+}
+}
+this.fillComboBox=function(jsonObj)
+{
+if(this.element.nodeName!='SELECT') throw "Select Tag Required.";
+if(!jsonObj["text"]) throw "text property required to fill combo box.";
+let text=jsonObj["text"];
+if((typeof text)!='string') throw "text property should be of type string.";
+if(!jsonObj["value"]) throw "value property required to fill combo box.";
+let value=jsonObj["value"];
+if((typeof value)!='string') throw "value property should be of type string.";
+let firstElement=null;
+let option;
+if(jsonObj["firstElement"])
+{
+firstElement=jsonObj["firstElement"];
+if(!firstElement["value"]) throw "value property required when you specify first Element.";
+if(!firstElement["text"]) throw "text property required when you specify first Element.";
+option=document.createElement("option");
+option.value=firstElement["value"];
+option.text=firstElement["text"];
+this.element.appendChild(option);
+}
+let dataSource=jsonObj["dataSource"];
+if(dataSource)
+{
+for(var i=0;i<dataSource.length;i++)
+{
+option=document.createElement("option");
+option.value=dataSource[i][value];
+option.text=dataSource[i][text];
+this.element.appendChild(option);
+}
+}
+}
+}
+$$$.ajax=function(jsonObj)
+{
+if(!jsonObj["url"]) throw "url property missing in call to ajax";
+let url=jsonObj["url"];
+if((typeof url)!='string') throw "url property should be of type string in call to ajax";
+let methodType='GET';
+if(jsonObj["methodType"])
+{
+methodType=jsonObj["methodType"];
+if((typeof methodType)!='string') throw "Method Type should be of type string in call to ajax";
+methodType=methodType.toUpperCase();
+if(['GET','POST'].includes(methodType)==false) throw "Method Type should be GET/POST in call to ajax";
+let success=null;
+if(jsonObj["success"])
+{
+success=jsonObj["success"];
+if((typeof success)!='function') throw "Success property should be of function type in call to ajax";
+}
+let failure=null;
+if(jsonObj["failure"])
+{
+failure=jsonObj["failure"];
+if((typeof failure)!='function') throw "Failure property should be of function type in call to ajax";
+}
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+if(success) success(this.responseText);
+}
+else
+{
+if(failure) failure();
+}
+}
+}
+if(methodType=='GET')
+{
+xmlHttpRequest.open(methodType,url,true);
+xmlHttpRequest.send();
+}
+if(methodType=='POST')
+{
+}
+}
+}
+//JROCK LIBRARY PART ENDS
+function getDesignations()
+{
+$$$.ajax({
+"url" : "servletFour",
+"methodType" : "GET",
+"success" : function(responseData){
+responseData=JSON.parse(responseData);
+var designations=$$$('designations');
+designations.fillComboBox({
+"dataSource" : responseData,
+"text" : "title",
+"value" : "code",
+"firstElement" : {
+"text" : "<Select>",
+"value" : "-1"
+}
+});
+},
+"failure" : function(){
+alert('Some Problem');
+}
+});
+}
+window.addEventListener("load",getDesignations);
+</script>
+</head>
+<body>
+<center>
+<select id='designations'>
+</select>
+</center>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!--                       Send JSON for GET type Request-->
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>HR Application</title>
+<script>
+//TMJROCKLIBRARY part starts
+function $$$(cid){
+}
+$$$.ajax=function(jsonObj){
+if(!jsonObj["url"]) throw "URL Property missing in call to ajax";
+let url=jsonObj["url"];
+if((typeof url)!="string") throw "URL Property should be of string type in call to ajax";
+let methodType='GET';
+if(jsonObj["methodType"])
+{
+methodType=jsonObj['methodType'];
+if((typeof methodType)!="string") throw "Method Type should be of string type.";
+methodType=methodType.toUpperCase();
+if(['GET','POST'].includes(methodType)==false) throw "Method Type should be of GET/POST in call to ajax";
+}
+let success=null;
+if(jsonObj['success'])
+{
+success=jsonObj['success'];
+if((typeof success)!='function') throw "Success Property should be of function type in call to ajax";
+}
+let failure=null;
+if(jsonObj['failure'])
+{
+failure=jsonObj['failure'];
+if((typeof failure)!='function') throw "Failure Property should be of function type in call to ajax";
+}
+if(methodType=='GET')
+{
+var xmlHttpRequest=new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange=function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+if(success) success(this.responseText);
+}
+else
+{
+if(failure) failure();
+}
+}
+};
+xmlHttpRequest.open(methodType,url,true);
+xmlHttpRequest.send();
+}
+if(methodType=='POST')
+{
+}
+}
+//TMJROCKLIBRARY part ends
+function getDesignations()
+{
+$$$.ajax({
+"url" : "servletFour",
+"methodType" : "GET",
+"success" : function(responseData){
+responseData=JSON.parse(responseData);
+var designations=document.getElementById('designations');
+var option;
+for(var i=0;i<responseData.length;i++)
+{
+option=document.createElement('option');
+option.value=responseData[i].code;
+option.text=responseData[i].title;
+designations.appendChild(option);
+}
+},
+"failure" : function(){
+alert('Some Problem');
+}
+});
+}
+window.addEventListener("load",getDesignations);
+</script>
+</head>
+<body>
+<center>
+<select id='designations'>
+<option value='-1'>&ltSelect&gt</option>
+</select>
+</center>
+</body>
+</html>
